@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/main.c
+stdio.h
+-
+string.h
+-
+omp.h
+C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/omp.h
+uthash.h
+C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/uthash.h
+
+C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/uthash.h
+string.h
+-
+stddef.h
+-
+stdlib.h
+-
+stdint.h
+-
+stdint.h
+-
+stdint.h
+-
+
