@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
-project(untitled1 C)
+project(Paralelo)
 
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD 14)
 
-add_executable(untitled1 main.c)
+add_executable(Paralelo main.cpp)

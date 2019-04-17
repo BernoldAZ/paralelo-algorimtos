@@ -47,10 +47,10 @@ RM = "C:\Program Files\JetBrains\CLion 2018.2.5\bin\cmake\win\bin\cmake.exe" -E 
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\usuario\Desktop\TEC\algoritmos\Tarea\Pruebas\Paralelo
+CMAKE_SOURCE_DIR = C:\Users\usuario\Desktop\TEC\algoritmos\Tarea\Paralelo
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\usuario\Desktop\TEC\algoritmos\Tarea\Pruebas\Paralelo\cmake-build-debug
+CMAKE_BINARY_DIR = C:\Users\usuario\Desktop\TEC\algoritmos\Tarea\Paralelo\cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -79,9 +79,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\usuario\Desktop\TEC\algoritmos\Tarea\Pruebas\Paralelo\cmake-build-debug\CMakeFiles C:\Users\usuario\Desktop\TEC\algoritmos\Tarea\Pruebas\Paralelo\cmake-build-debug\CMakeFiles\progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\usuario\Desktop\TEC\algoritmos\Tarea\Paralelo\cmake-build-debug\CMakeFiles C:\Users\usuario\Desktop\TEC\algoritmos\Tarea\Paralelo\cmake-build-debug\CMakeFiles\progress.marks
 	$(MAKE) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\usuario\Desktop\TEC\algoritmos\Tarea\Pruebas\Paralelo\cmake-build-debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\usuario\Desktop\TEC\algoritmos\Tarea\Paralelo\cmake-build-debug\CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -110,44 +110,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named untitled1
+# Target rules for targets named Paralelo
 
 # Build rule for target.
-untitled1: cmake_check_build_system
-	$(MAKE) -f CMakeFiles\Makefile2 untitled1
-.PHONY : untitled1
+Paralelo: cmake_check_build_system
+	$(MAKE) -f CMakeFiles\Makefile2 Paralelo
+.PHONY : Paralelo
 
 # fast build rule for target.
-untitled1/fast:
-	$(MAKE) -f CMakeFiles\untitled1.dir\build.make CMakeFiles/untitled1.dir/build
-.PHONY : untitled1/fast
+Paralelo/fast:
+	$(MAKE) -f CMakeFiles\Paralelo.dir\build.make CMakeFiles/Paralelo.dir/build
+.PHONY : Paralelo/fast
 
-main.obj: main.c.obj
+main.obj: main.cpp.obj
 
 .PHONY : main.obj
 
 # target to build an object file
-main.c.obj:
-	$(MAKE) -f CMakeFiles\untitled1.dir\build.make CMakeFiles/untitled1.dir/main.c.obj
-.PHONY : main.c.obj
+main.cpp.obj:
+	$(MAKE) -f CMakeFiles\Paralelo.dir\build.make CMakeFiles/Paralelo.dir/main.cpp.obj
+.PHONY : main.cpp.obj
 
-main.i: main.c.i
+main.i: main.cpp.i
 
 .PHONY : main.i
 
 # target to preprocess a source file
-main.c.i:
-	$(MAKE) -f CMakeFiles\untitled1.dir\build.make CMakeFiles/untitled1.dir/main.c.i
-.PHONY : main.c.i
+main.cpp.i:
+	$(MAKE) -f CMakeFiles\Paralelo.dir\build.make CMakeFiles/Paralelo.dir/main.cpp.i
+.PHONY : main.cpp.i
 
-main.s: main.c.s
+main.s: main.cpp.s
 
 .PHONY : main.s
 
 # target to generate assembly for a file
-main.c.s:
-	$(MAKE) -f CMakeFiles\untitled1.dir\build.make CMakeFiles/untitled1.dir/main.c.s
-.PHONY : main.c.s
+main.cpp.s:
+	$(MAKE) -f CMakeFiles\Paralelo.dir\build.make CMakeFiles/Paralelo.dir/main.cpp.s
+.PHONY : main.cpp.s
 
 # Help Target
 help:
@@ -155,7 +155,7 @@ help:
 	@echo ... all (the default if no target is provided)
 	@echo ... clean
 	@echo ... depend
-	@echo ... untitled1
+	@echo ... Paralelo
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... main.obj
