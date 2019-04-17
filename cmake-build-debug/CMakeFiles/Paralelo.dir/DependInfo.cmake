@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Paralelo/main.cpp" "C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Paralelo/cmake-build-debug/CMakeFiles/Paralelo.dir/main.cpp.obj"
+  "C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/paralelo-algorimtos/main.cpp" "C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/paralelo-algorimtos/cmake-build-debug/CMakeFiles/Paralelo.dir/main.cpp.obj"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

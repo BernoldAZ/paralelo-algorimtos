@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Paralelo/main.cpp
+C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/paralelo-algorimtos/main.cpp
 iostream
 -
 string
@@ -14,11 +14,11 @@ string
 fstream
 -
 omp.h
-C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Paralelo/omp.h
+C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/paralelo-algorimtos/omp.h
 uthash.h
-C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Paralelo/uthash.h
+C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/paralelo-algorimtos/uthash.h
 
-C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Paralelo/uthash.h
+C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/paralelo-algorimtos/uthash.h
 string.h
 -
 stddef.h

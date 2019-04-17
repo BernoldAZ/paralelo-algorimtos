@@ -152,7 +152,7 @@ void Obtener_Datos_Nodos (string frase){
     //AGREGA EL NODO A LA HASHTABLE
     add_node(&Node_Actual);
 
-    /*
+
     std::cout << find_node(StringToInt(id_nodo))->id_nodo << std::endl;
     std::cout << find_node(StringToInt(id_nodo))->peso_nodo << std::endl;
     std::cout << find_node(StringToInt(id_nodo))->Cantidad_Anteriores << std::endl;
@@ -160,7 +160,7 @@ void Obtener_Datos_Nodos (string frase){
     std::cout << find_node(StringToInt(id_nodo))->Cantidad_Siguientes << std::endl;
     std::cout << find_node(StringToInt(id_nodo))->Nodos_Siguientes[0] << std::endl;
 
-    std::cout << frase << std::endl;*/
+    std::cout << frase << std::endl;
 
 }
 
