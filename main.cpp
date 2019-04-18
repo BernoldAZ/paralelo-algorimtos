@@ -9,7 +9,6 @@ using namespace std;
 //************************************************************************************************
 //elementos de la hash table
 struct node {
-    UT_hash_handle hh; /* makes this structure hashable */
     int id_nodo;
     int peso_nodo;
     int Cantidad_Anteriores;
@@ -19,27 +18,7 @@ struct node {
 };
 
 
-//Declaracion del puntero a la hash table de todos los nodos
-struct node *table_nodos = NULL;
-
-
-//funcion que permite agregar nodos a la hash table de nodos
-void add_node(struct node *pNode) {
-    HASH_ADD_INT( table_nodos, id_nodo, pNode );
-}
-
-//funcion que permite buscar nodos en la hash table de nodos
-struct node *find_node(int node_id) {
-    struct node *s;
-
-    HASH_FIND_INT( table_nodos, &node_id, s );
-    return s;
-}
-
-//funcion que permite eliminar nodos en la hash table de nodos
-void delete_node(struct node *pNode) {
-    HASH_DEL( table_nodos, pNode);
-}
+node Array_Nodes[500];
 
 //***************************************************************************************************
 //Funciones que hacen distintas cosas pequeñas
@@ -150,9 +129,10 @@ void Obtener_Datos_Nodos (string frase){
 
 
     //AGREGA EL NODO A LA HASHTABLE
-    add_node(&Node_Actual);
+    Array_Nodes[Node_Actual.id_nodo] = Node_Actual;
 
 
+/*
     std::cout << find_node(StringToInt(id_nodo))->id_nodo << std::endl;
     std::cout << find_node(StringToInt(id_nodo))->peso_nodo << std::endl;
     std::cout << find_node(StringToInt(id_nodo))->Cantidad_Anteriores << std::endl;
@@ -160,7 +140,7 @@ void Obtener_Datos_Nodos (string frase){
     std::cout << find_node(StringToInt(id_nodo))->Cantidad_Siguientes << std::endl;
     std::cout << find_node(StringToInt(id_nodo))->Nodos_Siguientes[0] << std::endl;
 
-    std::cout << frase << std::endl;
+    std::cout << frase << std::endl;*/
 
 }
 
@@ -168,18 +148,21 @@ void readFile(){
     std::ifstream ficheroEntrada;
     string frase;
 
-    ficheroEntrada.open ("C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Paralelo/graph_info.txt");
+    ficheroEntrada.open ("C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/paralelo-algorimtos/test.txt");
 
 
     //va lleyendo linea por linea
     while (!ficheroEntrada.eof()){
         getline(ficheroEntrada, frase);
+
         #pragma omp parallel
         {
             Obtener_Datos_Nodos(frase);
         };
         //Break
     }
+    std::cout << Array_Nodes[32].id_nodo << std::endl;
+
     
     ficheroEntrada.close();
 
