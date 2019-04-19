@@ -5,6 +5,8 @@
 #include "omp.h"
 #include "uthash.h"
 
+
+
 using namespace std;
 //************************************************************************************************
 //elementos de la hash table
@@ -31,10 +33,10 @@ int StringToInt(string pString){
     return n;
 }
 
-
+ofstream fi;
 int ultimoEnLeer=0;
 int ultimo=0;
-
+int indice=0;
 //************************************************************************************************
 //elementos que leen archivos
 void Obtener_Datos_Nodos (string frase){
@@ -159,6 +161,10 @@ void Obtener_Datos_Nodos (string frase){
 
 
 }
+void escribir(string entrada){
+  fi.seekp(indice);//Se ubica en el indice
+  fi << entrada;
+}
 void infoPareja(node a, node b,string c,string d,int nivel,int peso){//Cuando se llama en profundidad n>1
   string info;
   info=to_string(a.id_nodo);//Primer nodo
@@ -181,7 +187,10 @@ void infoPareja(node a, node b,string c,string d,int nivel,int peso){//Cuando se
   info+=",";
   info+=to_string(nivel);//Cantidad de nodos por los que pasa/Nivel de profundidad de la llamada
   int cont=0;
-  cout<<info<<"\n";
+  info+="\n";
+  escribir(info);
+  indice+=info.length()+1;
+  //Escribe el archivo
   nivel+=1;
   while(cont<b.Cantidad_Siguientes){
       node j;
@@ -210,9 +219,11 @@ void crearParejas(){
 
 void readFile(){
     std::ifstream ficheroEntrada;
-    string frase;
 
     ficheroEntrada.open ("C:/Users/U1/Documents/Archivos/grafoPequeno.txt");
+
+
+    string frase;
 
 
     //va lleyendo linea por linea
@@ -231,8 +242,12 @@ void readFile(){
 
     
     ficheroEntrada.close();
-
+    //Crea los respectivos archivos
+    string arch="C:/Users/U1/Documents/Archivos/parejas.txt";
+    fi.open(arch);
     crearParejas();
+    fi.close();
+
 
 }
 
