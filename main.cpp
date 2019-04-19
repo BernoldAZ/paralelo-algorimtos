@@ -18,7 +18,7 @@ struct node {
 };
 
 
-node Array_Nodes[500];
+node Array_Nodes[1000];
 
 //***************************************************************************************************
 //Funciones que hacen distintas cosas pequeñas
@@ -32,13 +32,15 @@ int StringToInt(string pString){
 }
 
 
-
+int ultimoEnLeer=0;
+int ultimo=0;
 
 //************************************************************************************************
 //elementos que leen archivos
 void Obtener_Datos_Nodos (string frase){
 
     node Node_Actual;
+    frase+=' ';
 
     int recorrer = 0;
     string id_nodo;
@@ -66,50 +68,18 @@ void Obtener_Datos_Nodos (string frase){
 
     //*********************************************************
     while(frase[recorrer] != ' ') { //da la cantidad de nodos anteriores del nodo
-        Cantidad_Anteriores = Cantidad_Anteriores + frase[recorrer];
-        recorrer++;
-    }
-    Node_Actual.Cantidad_Anteriores = StringToInt(Cantidad_Anteriores);
-    if(frase[recorrer] == ' '){recorrer++;}
-
-    if (Cantidad_Anteriores != "0"){ //Pregunta si tiene mas de 0 nodos anteriores
-        IsFirst = false; //Altera la bandera
-
-        int Cantidad_Nodos = StringToInt(Cantidad_Anteriores); //Nos da la cantidad de nodos que usaremos en el for
-
-        for (int i=0; i<Cantidad_Nodos;i++ ){ //Con cada iteracion nos da uno de los nodos siguientes
-
-            string Node_Actual_En_Lista;
-            while(frase[recorrer] != ' '){ //da los nodos anteriores del nodo
-                Node_Actual_En_Lista = Node_Actual_En_Lista + frase[recorrer];
-
-                recorrer++;
-
-            }
-            Node_Actual.Nodos_Anteriores[i] = StringToInt(Node_Actual_En_Lista);
-            if(frase[recorrer] == ' '){recorrer++;}
-
-        }
-    }
-    else{
-        IsFirst = true;
-        if(frase[recorrer] == ' '){recorrer++;}
-    }
-
-    //*********************************************************
-    while(frase[recorrer] != ' '){ //da la cantidad de nodos siguientes del nodo
         Cantidad_Siguientes = Cantidad_Siguientes + frase[recorrer];
         recorrer++;
     }
     Node_Actual.Cantidad_Siguientes = StringToInt(Cantidad_Siguientes);
     if(frase[recorrer] == ' '){recorrer++;}
 
-    if (Cantidad_Siguientes != "0"){ //Pregunta si tiene mas de 0 nodos siguientes
-        IsLast = false;
+    if (Cantidad_Siguientes != "0"){ //Pregunta si tiene mas de 0 nodos anteriores
+        IsFirst = false; //Altera la bandera
 
-        int Cantidad_Nodos = StringToInt(Cantidad_Siguientes);
+        int Cantidad_Nodos = StringToInt(Cantidad_Siguientes); //Nos da la cantidad de nodos que usaremos en el for
 
-        for (int i=0; i<Cantidad_Nodos;i++ ){
+        for (int i=0; i<Cantidad_Nodos;i++ ){ //Con cada iteracion nos da uno de los nodos siguientes
 
             string Node_Actual_En_Lista;
             while(frase[recorrer] != ' '){ //da los nodos anteriores del nodo
@@ -124,47 +94,145 @@ void Obtener_Datos_Nodos (string frase){
         }
     }
     else{
+        IsFirst = true;
+        if(frase[recorrer] == ' '){recorrer++;}
+    }
+
+    //*********************************************************
+    while(frase[recorrer] != ' '){ //da la cantidad de nodos siguientes del nodo
+        Cantidad_Anteriores = Cantidad_Anteriores + frase[recorrer];
+        recorrer++;
+    }
+    Node_Actual.Cantidad_Anteriores = StringToInt(Cantidad_Anteriores);
+    if(frase[recorrer] == ' '){recorrer++;}
+
+    if (Cantidad_Anteriores != "0"){ //Pregunta si tiene mas de 0 nodos siguientes
+        IsLast = false;
+
+        int Cantidad_Nodos = StringToInt(Cantidad_Anteriores);
+
+        for (int i=0; i<Cantidad_Nodos;i++ ){
+
+            string Node_Actual_En_Lista;
+            while(frase[recorrer] != ' '){ //da los nodos anteriores del nodo
+                Node_Actual_En_Lista = Node_Actual_En_Lista + frase[recorrer];
+
+                recorrer++;
+
+            }
+            Node_Actual.Nodos_Anteriores[i] = StringToInt(Node_Actual_En_Lista);
+            if(frase[recorrer] == ' '){recorrer++;}
+
+        }
+    }
+    else{
         IsLast = true;
     }
 
 
     //AGREGA EL NODO A LA HASHTABLE
-    Array_Nodes[Node_Actual.id_nodo] = Node_Actual;
+    Array_Nodes[ultimoEnLeer] = Node_Actual;
 
 
 /*
-    std::cout << find_node(StringToInt(id_nodo))->id_nodo << std::endl;
-    std::cout << find_node(StringToInt(id_nodo))->peso_nodo << std::endl;
-    std::cout << find_node(StringToInt(id_nodo))->Cantidad_Anteriores << std::endl;
-    std::cout << find_node(StringToInt(id_nodo))->Nodos_Anteriores[0] << std::endl;
-    std::cout << find_node(StringToInt(id_nodo))->Cantidad_Siguientes << std::endl;
-    std::cout << find_node(StringToInt(id_nodo))->Nodos_Siguientes[0] << std::endl;
+    int cont=0;
+    std::cout << "ID: " << Array_Nodes[ultimoEnLeer].id_nodo << std::endl;
+    std::cout << "Peso: " << Array_Nodes[ultimoEnLeer].peso_nodo << std::endl;
+    std::cout << "Cant Anteriores: " << Array_Nodes[ultimoEnLeer].Cantidad_Anteriores << std::endl;
+    std::cout << "Anteriores: ";
+    while(cont<Array_Nodes[ultimoEnLeer].Cantidad_Anteriores){
+        std::cout << Array_Nodes[ultimoEnLeer].Nodos_Anteriores[cont];
+        cont++;
+    }
+    cont=0;
+    std::cout << "\nCant Siguientes: " << Array_Nodes[ultimoEnLeer].Cantidad_Siguientes<< std::endl;
+    std::cout << "Siguientes: ";
+    while(cont<Array_Nodes[ultimoEnLeer].Cantidad_Siguientes){
+        cout<< Array_Nodes[ultimoEnLeer].Nodos_Siguientes[cont];
+        cont++;
+    }
 
-    std::cout << frase << std::endl;*/
 
+    std::cout << "\n"<<frase << "\n\n\n"<<std::endl;
+    */
+    ultimoEnLeer++;
+
+
+}
+void infoPareja(node a, node b,string c,string d,int nivel,int peso){//Cuando se llama en profundidad n>1
+  string info;
+  info=to_string(a.id_nodo);//Primer nodo
+  info+=",";
+  info+=to_string(b.id_nodo);//Ultimo nodo
+  info+=",[";//Nodos por los que pasa
+  string ayudaA;
+  ayudaA=c;
+  ayudaA+=to_string(b.id_nodo);
+  info+=ayudaA;
+  ayudaA+=",";
+  info+="],[";//Peso de los nodos por los que pasa
+  string ayudaB=d;
+  ayudaB+=to_string(b.peso_nodo);
+  info+=ayudaB;
+  ayudaB+=",";
+  info+="],";
+  peso+=b.peso_nodo;
+  info+=to_string(peso);//Sumatoria de todos los nodos
+  info+=",";
+  info+=to_string(nivel);//Cantidad de nodos por los que pasa/Nivel de profundidad de la llamada
+  int cont=0;
+  cout<<info<<"\n";
+  nivel+=1;
+  while(cont<b.Cantidad_Siguientes){
+      node j;
+      int cont2=0;
+      while(cont2<100000){
+          //cout<<"CONT2: "<<cont2<<"\n";
+          if(Array_Nodes[cont2].id_nodo==b.Nodos_Siguientes[cont]){
+              j=Array_Nodes[cont2];
+              break;
+          }
+          cont2++;
+      }
+      infoPareja(a,j,ayudaA,ayudaB,nivel,peso);
+      cont++;
+  }
+}
+
+void crearParejas(){
+  ultimoEnLeer=0;
+  while(ultimoEnLeer<ultimo){
+      //cout<<"YA\n";
+      infoPareja(Array_Nodes[ultimoEnLeer],Array_Nodes[ultimoEnLeer],"","",0,0);
+      ultimoEnLeer++;
+  }
 }
 
 void readFile(){
     std::ifstream ficheroEntrada;
     string frase;
 
-    ficheroEntrada.open ("C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/paralelo-algorimtos/test.txt");
+    ficheroEntrada.open ("C:/Users/U1/Documents/Archivos/grafoPequeno.txt");
 
 
     //va lleyendo linea por linea
     while (!ficheroEntrada.eof()){
         getline(ficheroEntrada, frase);
 
-        #pragma omp parallel
-        {
+        //#pragma omp parallel
+        //{
             Obtener_Datos_Nodos(frase);
-        };
+        //};
         //Break
     }
-    std::cout << Array_Nodes[32].id_nodo << std::endl;
+    ultimo=ultimoEnLeer;
+    ultimoEnLeer=0;
+
 
     
     ficheroEntrada.close();
+
+    crearParejas();
 
 }
 
@@ -172,7 +240,7 @@ void readFile(){
 int main() {
 
     readFile();
-    #pragma omp parallel
+    //#pragma omp parallel
     {
 
     };
