@@ -34,9 +34,15 @@ int StringToInt(string pString){
 }
 
 ofstream fi;
+ofstream salida1;
+ofstream salida2;
+
 int ultimoEnLeer=0;
 int ultimo=0;
 int indice=0;
+int indice1=0;
+int indice2=0;
+
 //************************************************************************************************
 //elementos que leen archivos
 void Obtener_Datos_Nodos (string frase){
@@ -161,9 +167,23 @@ void Obtener_Datos_Nodos (string frase){
 
 
 }
+
 void escribir(string entrada){
   fi.seekp(indice);//Se ubica en el indice
   fi << entrada;
+}
+
+node buscarNodo(int id){
+  node j;
+  int cont2=0;
+  while(cont2<100000){
+      if(Array_Nodes[cont2].id_nodo==id){
+          j=Array_Nodes[cont2];
+          break;
+      }
+      cont2++;
+  }
+  return j;
 }
 void infoPareja(node a, node b,string c,string d,int nivel,int peso){//Cuando se llama en profundidad n>1
   string info;
@@ -193,25 +213,138 @@ void infoPareja(node a, node b,string c,string d,int nivel,int peso){//Cuando se
   //Escribe el archivo
   nivel+=1;
   while(cont<b.Cantidad_Siguientes){
-      node j;
-      int cont2=0;
-      while(cont2<100000){
-          //cout<<"CONT2: "<<cont2<<"\n";
-          if(Array_Nodes[cont2].id_nodo==b.Nodos_Siguientes[cont]){
-              j=Array_Nodes[cont2];
-              break;
-          }
-          cont2++;
-      }
+      node j=buscarNodo(b.Nodos_Siguientes[cont]);
       infoPareja(a,j,ayudaA,ayudaB,nivel,peso);
       cont++;
   }
 }
 
+string calcularFanIn(node a){
+  //cout<<"Examina fan in nodo: "<<a.id_nodo<<"\n";
+  string respuesta="";
+  int cont=0;
+  while(cont<a.Cantidad_Anteriores){
+      node l=buscarNodo(a.Nodos_Anteriores[cont]);
+      respuesta+=to_string(l.id_nodo);
+      respuesta+=",";
+      respuesta+=calcularFanIn(l);
+      cont++;
+  }
+  return respuesta;
+}
+
+string calcularFanOut(node a){
+  //cout<<"Examina fan out nodo: "<<a.id_nodo<<"\n";
+  string respuesta="";
+  int cont=0;
+  while(cont<a.Cantidad_Siguientes){
+      node l=buscarNodo(a.Nodos_Siguientes[cont]);
+      respuesta+=to_string(l.id_nodo);
+      respuesta+=",";
+      respuesta+=calcularFanOut(l);
+      cont++;
+  }
+  return respuesta;
+}
+string metricaFan(string f){
+  if(f.length()==0){
+      return "";
+  }
+  string metrica;
+  int parser=0;
+  int nodosAparecen[10000];
+  int contNodo=0;
+  string nodoActual;
+  //cout<<"Lenght: "<<f.length()<<"\n";
+  int limite=f.length();
+  //cout<<"Limite: "<<limite<<"\n";
+  while(parser<limite){
+      while(f[parser]!=',' && parser<limite){
+          //cout<<"Indice: "<<f[parser]<<"\n";
+          nodoActual+=f[parser];
+          parser++;
+      }
+      nodosAparecen[contNodo]=StringToInt(nodoActual);
+      parser++;
+      contNodo++;
+      nodoActual="";
+  }
+  contNodo++;
+  metrica+="\nSumatoria neta: ";//Suma todo una vez
+  int cont=0;
+  int suma=0;
+  int nodosSinRepetir[10000];
+  int cont2=0;
+  while(cont<contNodo){
+      int revisor=0;
+      while(nodosSinRepetir[revisor]!=0&&cont<contNodo){
+          if(nodosAparecen[cont]==nodosSinRepetir[revisor]){
+              cont++;
+              revisor=-1;
+          }
+          revisor++;
+      }
+      if(cont<contNodo){
+          nodosSinRepetir[cont2]=nodosAparecen[cont];
+          cont++;
+          cont2++;
+      }
+  }
+  cont=0;
+  while(cont<cont2){
+      node l=buscarNodo(nodosSinRepetir[cont]);
+      suma+=l.peso_nodo;
+      cont++;
+  }
+  metrica+=to_string(suma);
+  metrica+="\nSumatoria absoluta: ";//Suma todo
+  cont=0;
+  suma=0;
+  while(cont<contNodo){
+      node l=buscarNodo(nodosAparecen[cont]);
+      suma+=l.peso_nodo;
+      cont++;
+  }
+  metrica+=to_string(suma);
+  metrica+="\nPromedio: ";//El anterior entre la cantidad de nodos
+  suma=suma/(contNodo-1);
+  metrica+=to_string(suma);
+  return metrica;
+}
+
+void crearSalida1(node a){
+  string respuesta;
+  respuesta="Nodo: "+to_string(a.id_nodo);
+  respuesta+=";\nFan In: ";
+  string h=calcularFanIn(a);
+  h=h.substr(0,h.length()-1);
+  respuesta+=h;
+  if(h==""){
+      respuesta+="Vacio";
+  }
+  h=metricaFan(h);
+  if(h!=""){
+      respuesta+=";\nMetrica: "+h;
+  }
+  respuesta+=";\nFan Out: ";
+  h=calcularFanOut(a);
+  h=h.substr(0,h.length()-1);
+  respuesta+=h;
+  if(h==""){
+      respuesta+="Vacio";
+  }
+  h=metricaFan(h);
+  if(h!=""){
+      respuesta+=";\nMetrica: "+h;
+  }
+  respuesta+=";\n\n";
+  cout<<respuesta;
+}
+
 void crearParejas(){
   ultimoEnLeer=0;
   while(ultimoEnLeer<ultimo){
-      //cout<<"YA\n";
+      crearSalida1(Array_Nodes[ultimoEnLeer]);
       infoPareja(Array_Nodes[ultimoEnLeer],Array_Nodes[ultimoEnLeer],"","",0,0);
       ultimoEnLeer++;
   }
@@ -238,8 +371,6 @@ void readFile(){
     }
     ultimo=ultimoEnLeer;
     ultimoEnLeer=0;
-
-
     
     ficheroEntrada.close();
     //Crea los respectivos archivos
@@ -250,12 +381,66 @@ void readFile(){
 
 
 }
-
+string cortarPareja(string pareja){
+  string respuesta="";
+  respuesta+="Pareja: ";
+  int parser=0;
+  while(pareja[parser]!=','){
+      respuesta+=pareja[parser];
+      parser++;
+  }
+  respuesta+=",";
+  parser++;
+  while(pareja[parser]!=','){
+      respuesta+=pareja[parser];
+      parser++;
+  }
+  parser++;
+  parser++;
+  int parserPesos=parser;
+  respuesta+="\nMetrica:\nSumatoria neta:\n";
+  int nodos[10000];
+  int tope=0;
+  while(pareja[parser]!=']'&& pareja[parser]!=','){
+      string nodo="";
+      while(pareja[parser]!=','&& pareja[parser]!=']'){
+          nodo+=pareja[parser];
+          parser++;
+      }
+      if(pareja[parser]!=']'){
+          parser++;
+      }
+      int numNodo=StringToInt(nodo);
+      cout<<numNodo<<"\n";
+      int revisor=0;
+      while(revisor<tope){
+          if(nodos[revisor]==numNodo){
+              numNodo=0;
+              break;
+          }
+          revisor++;
+      }
+      if(numNodo!=0){
+          nodos[tope]=numNodo;
+          tope++;
+      }
+  }
+  respuesta+="Sumatoria absoluta:\n";
+  respuesta+="Promedio:\n";
+  return respuesta;
+}
 
 int main() {
 
-    readFile();
+    //readFile();
     //#pragma omp parallel
+  //frase=frase.substr(0,4);
+  string a="2,3,[2,3],[3,4],7,1";
+  string b="2,5,[2,3,4,5],[3,4,5,8],20,3";
+  string c="2,5,[2,7,3,4,5],[3,7,4,5,8],27,4";
+  cout<<cortarPareja(a);
+  cout<<cortarPareja(b);
+  cout<<cortarPareja(c);
     {
 
     };
