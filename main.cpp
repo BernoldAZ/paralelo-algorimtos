@@ -255,12 +255,9 @@ string metricaFan(string f){
   int nodosAparecen[10000];
   int contNodo=0;
   string nodoActual;
-  //cout<<"Lenght: "<<f.length()<<"\n";
   int limite=f.length();
-  //cout<<"Limite: "<<limite<<"\n";
   while(parser<limite){
       while(f[parser]!=',' && parser<limite){
-          //cout<<"Indice: "<<f[parser]<<"\n";
           nodoActual+=f[parser];
           parser++;
       }
@@ -398,8 +395,13 @@ string cortarPareja(string pareja){
   parser++;
   parser++;
   int parserPesos=parser;
+  while(pareja[parserPesos]!='['){
+      parserPesos++;
+  }
+  parserPesos++;
   respuesta+="\nMetrica:\nSumatoria neta:\n";
   int nodos[10000];
+  int peso=0;
   int tope=0;
   while(pareja[parser]!=']'&& pareja[parser]!=','){
       string nodo="";
@@ -411,11 +413,18 @@ string cortarPareja(string pareja){
           parser++;
       }
       int numNodo=StringToInt(nodo);
-      cout<<numNodo<<"\n";
+      string pesoNodo="";
+      while(pareja[parserPesos]!=','&& pareja[parserPesos]!=']'){
+          pesoNodo+=pareja[parserPesos];
+          parserPesos++;
+      }
+      parserPesos++;
+      int pesNod=StringToInt(pesoNodo);
       int revisor=0;
       while(revisor<tope){
           if(nodos[revisor]==numNodo){
               numNodo=0;
+              pesNod=0;
               break;
           }
           revisor++;
@@ -423,10 +432,30 @@ string cortarPareja(string pareja){
       if(numNodo!=0){
           nodos[tope]=numNodo;
           tope++;
+          peso+=pesNod;
       }
   }
-  respuesta+="Sumatoria absoluta:\n";
-  respuesta+="Promedio:\n";
+  respuesta+=to_string(peso);
+  respuesta+="\nSumatoria absoluta:\n";
+  parserPesos++;
+  string pesoNodo;
+  while(pareja[parserPesos]!=','){
+      pesoNodo+=pareja[parserPesos];
+      parserPesos++;
+  }
+  parserPesos++;
+  peso=StringToInt(pesoNodo);
+  respuesta+=to_string(peso);
+  respuesta+="\nPromedio:\n";
+  pesoNodo="";
+  while(parserPesos<=pareja.length()){
+      pesoNodo+=pareja[parserPesos];
+      parserPesos++;
+  }
+  int cantNodos=1;
+  cantNodos+=StringToInt(pesoNodo);
+  respuesta+=to_string(peso/cantNodos);
+  respuesta+="\n";
   return respuesta;
 }
 
