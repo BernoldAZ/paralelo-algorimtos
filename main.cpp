@@ -9,18 +9,25 @@
 
 using namespace std;
 //************************************************************************************************
-//elementos de la hash table
+// Struct que tiene la información de cada nodo
 struct node {
     int id_nodo;
     int peso_nodo;
     int Cantidad_Anteriores;
-    int Nodos_Anteriores[10000];
+    int Nodos_Anteriores[2862];
     int Cantidad_Siguientes;
-    int Nodos_Siguientes[10000];
+    int Nodos_Siguientes[857];
 };
 
+//Array donde se van a guardar todos los nodos, El nodo con el id i va a estar en Array_Nodes[i]
 
-node Array_Nodes[1000];
+node Array_Nodes[74782]; // 74782 es el maximo id de un nodo
+
+node Array_Nodes_Iniciales[17312]; //17312 es la cantidad de nodos iniciales
+
+int UltimoNodoInicial= 0; //Cuenta los nodos iniciales
+
+int contador_Nodos = 0; // Cuenta todos los nodos
 
 //***************************************************************************************************
 //Funciones que hacen distintas cosas pequeñas
@@ -33,22 +40,37 @@ int StringToInt(string pString){
     return n;
 }
 
+node buscarNodo(int id){
+    node j;
+
+    j = Array_Nodes[id];
+    /*
+    int cont2=0;
+    while(cont2<100000){
+        if(Array_Nodes[cont2].id_nodo==id){
+            j=Array_Nodes[cont2];
+            break;
+        }
+        cont2++;
+    }*/
+    return j;
+}
+
 ofstream fi;
 ofstream salida1;
 ofstream salida2;
 
-int ultimoEnLeer=0;
 int ultimo=0;
 int indice=0;
 int indice1=0;
 int indice2=0;
 
-//************************************************************************************************
-//elementos que leen archivos
-void Obtener_Datos_Nodos (string frase){
+//*************************************************************************************************************************************************************************
+//AQUI PARA ABAJO HACE LO DE LEER EL ARCHIVO Y CREAR NODOS
+void Obtener_Datos_Nodos (string frase) {
 
     node Node_Actual;
-    frase+=' ';
+    frase += ' ';
 
     int recorrer = 0;
     string id_nodo;
@@ -59,132 +81,149 @@ void Obtener_Datos_Nodos (string frase){
     bool IsLast; //Bandera que indica si el nodo no tiene siguientes
 
     //*********************************************************
-    while(frase[recorrer] != ' '){ //da el id del nodo
+    while (frase[recorrer] != ' ') { //da el id del nodo
         id_nodo = id_nodo + frase[recorrer];
         recorrer++;
     }
     Node_Actual.id_nodo = StringToInt(id_nodo); //Guarda el id
-    if(frase[recorrer] == ' '){recorrer++;}
+
+    while(frase[recorrer] == ' '){
+        recorrer++;
+    }
 
     //*********************************************************
-    while(frase[recorrer] != ' '){ //da el peso del nodo
+    while (frase[recorrer] != ' ') { //da el peso del nodo
         peso_nodo = peso_nodo + frase[recorrer];
         recorrer++;
     }
     Node_Actual.peso_nodo = StringToInt(peso_nodo);//Guarda el peso
-    if(frase[recorrer] == ' '){recorrer++;}
+
+    while(frase[recorrer] == ' '){
+        recorrer++;
+    }
 
     //*********************************************************
-    while(frase[recorrer] != ' ') { //da la cantidad de nodos anteriores del nodo
+    while (frase[recorrer] != ' ') { //da la cantidad de nodos anteriores del nodo
         Cantidad_Siguientes = Cantidad_Siguientes + frase[recorrer];
         recorrer++;
     }
     Node_Actual.Cantidad_Siguientes = StringToInt(Cantidad_Siguientes);
-    if(frase[recorrer] == ' '){recorrer++;}
+    while(frase[recorrer] == ' '){
+        recorrer++;
+    }
 
-    if (Cantidad_Siguientes != "0"){ //Pregunta si tiene mas de 0 nodos anteriores
+    if (Cantidad_Siguientes != "0") { //Pregunta si tiene mas de 0 nodos anteriores
         IsFirst = false; //Altera la bandera
 
         int Cantidad_Nodos = StringToInt(Cantidad_Siguientes); //Nos da la cantidad de nodos que usaremos en el for
 
-        for (int i=0; i<Cantidad_Nodos;i++ ){ //Con cada iteracion nos da uno de los nodos siguientes
+        for (int i = 0; i < Cantidad_Nodos; i++) { //Con cada iteracion nos da uno de los nodos siguientes
 
             string Node_Actual_En_Lista;
-            while(frase[recorrer] != ' '){ //da los nodos anteriores del nodo
+            while (frase[recorrer] != ' ') { //da los nodos anteriores del nodo
                 Node_Actual_En_Lista = Node_Actual_En_Lista + frase[recorrer];
 
                 recorrer++;
 
             }
             Node_Actual.Nodos_Siguientes[i] = StringToInt(Node_Actual_En_Lista);
-            if(frase[recorrer] == ' '){recorrer++;}
+            if (frase[recorrer] == ' ') { recorrer++; }
 
         }
-    }
-    else{
+    } else {
         IsFirst = true;
-        if(frase[recorrer] == ' '){recorrer++;}
+        if (frase[recorrer] == ' ') { recorrer++; }
     }
 
     //*********************************************************
-    while(frase[recorrer] != ' '){ //da la cantidad de nodos siguientes del nodo
+    while (frase[recorrer] != ' ') { //da la cantidad de nodos siguientes del nodo
         Cantidad_Anteriores = Cantidad_Anteriores + frase[recorrer];
         recorrer++;
     }
     Node_Actual.Cantidad_Anteriores = StringToInt(Cantidad_Anteriores);
-    if(frase[recorrer] == ' '){recorrer++;}
+    while(frase[recorrer] == ' '){
+        recorrer++;
+    }
 
-    if (Cantidad_Anteriores != "0"){ //Pregunta si tiene mas de 0 nodos siguientes
+    if (Cantidad_Anteriores != "0") { //Pregunta si tiene mas de 0 nodos siguientes
         IsLast = false;
 
         int Cantidad_Nodos = StringToInt(Cantidad_Anteriores);
 
-        for (int i=0; i<Cantidad_Nodos;i++ ){
+        for (int i = 0; i < Cantidad_Nodos; i++) {
 
             string Node_Actual_En_Lista;
-            while(frase[recorrer] != ' '){ //da los nodos anteriores del nodo
+            while (frase[recorrer] != ' ') { //da los nodos anteriores del nodo
                 Node_Actual_En_Lista = Node_Actual_En_Lista + frase[recorrer];
 
                 recorrer++;
 
             }
             Node_Actual.Nodos_Anteriores[i] = StringToInt(Node_Actual_En_Lista);
-            if(frase[recorrer] == ' '){recorrer++;}
+            if (frase[recorrer] == ' ') { recorrer++; }
 
         }
-    }
-    else{
+    } else {
         IsLast = true;
     }
 
 
-    //AGREGA EL NODO A LA HASHTABLE
-    Array_Nodes[ultimoEnLeer] = Node_Actual;
+    //AGREGA EL NODO AL ARRAY DE NODOS
+    Array_Nodes[Node_Actual.id_nodo] = Node_Actual; //Se agrega en la posicion del id
 
-
-/*
-    int cont=0;
-    std::cout << "ID: " << Array_Nodes[ultimoEnLeer].id_nodo << std::endl;
-    std::cout << "Peso: " << Array_Nodes[ultimoEnLeer].peso_nodo << std::endl;
-    std::cout << "Cant Anteriores: " << Array_Nodes[ultimoEnLeer].Cantidad_Anteriores << std::endl;
-    std::cout << "Anteriores: ";
-    while(cont<Array_Nodes[ultimoEnLeer].Cantidad_Anteriores){
-        std::cout << Array_Nodes[ultimoEnLeer].Nodos_Anteriores[cont];
-        cont++;
-    }
-    cont=0;
-    std::cout << "\nCant Siguientes: " << Array_Nodes[ultimoEnLeer].Cantidad_Siguientes<< std::endl;
-    std::cout << "Siguientes: ";
-    while(cont<Array_Nodes[ultimoEnLeer].Cantidad_Siguientes){
-        cout<< Array_Nodes[ultimoEnLeer].Nodos_Siguientes[cont];
-        cont++;
+    //Si el nodo leido no tiene arcos hacia el, es un nodo inicial y se coloca en el array de nodos iniciales
+    if (IsFirst) {
+        Array_Nodes_Iniciales[UltimoNodoInicial] = Node_Actual;
+        UltimoNodoInicial++;
     }
 
-
-    std::cout << "\n"<<frase << "\n\n\n"<<std::endl;
-    */
-    ultimoEnLeer++;
-
+    contador_Nodos++;
+    //std::cout << Node_Actual.id_nodo << std::endl;
 
 }
 
+void readFile() {
+    std::ifstream ficheroEntrada;
+
+    ficheroEntrada.open("C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/paralelo-algorimtos/graph_info.txt");
+
+
+    string frase;
+
+
+    //va lleyendo linea por linea
+    while (!ficheroEntrada.eof()) {
+
+        if(contador_Nodos == 50155){   //Hace que termine de leer el archivo. 50155 es la cantidad de nodos que hay
+            break;
+        }
+        getline(ficheroEntrada, frase);
+
+        //#pragma omp parallel
+        //{
+        Obtener_Datos_Nodos(frase);
+        //};
+    }
+    ficheroEntrada.close();
+
+    std::cout << buscarNodo(74754).id_nodo << std::endl;
+
+
+    //Crea los respectivos archivos
+    /*
+    string arch="C:/Users/U1/Documents/Archivos/parejas.txt";
+    fi.open(arch);
+    crearParejas();
+    fi.close();*/
+}
+
+//AQUI PARA ARRIBA HACE LO DE LEER EL ARCHIVO Y CREAR NODOS
+//********************************************************************************************************************************
 void escribir(string entrada){
   fi.seekp(indice);//Se ubica en el indice
   fi << entrada;
 }
 
-node buscarNodo(int id){
-  node j;
-  int cont2=0;
-  while(cont2<100000){
-      if(Array_Nodes[cont2].id_nodo==id){
-          j=Array_Nodes[cont2];
-          break;
-      }
-      cont2++;
-  }
-  return j;
-}
 void infoPareja(node a, node b,string c,string d,int nivel,int peso){//Cuando se llama en profundidad n>1
   string info;
   info=to_string(a.id_nodo);//Primer nodo
@@ -339,7 +378,7 @@ void crearSalida1(node a){
 }
 
 void crearParejas(){
-  ultimoEnLeer=0;
+  int ultimoEnLeer=0;
   while(ultimoEnLeer<ultimo){
       crearSalida1(Array_Nodes[ultimoEnLeer]);
       infoPareja(Array_Nodes[ultimoEnLeer],Array_Nodes[ultimoEnLeer],"","",0,0);
@@ -347,37 +386,6 @@ void crearParejas(){
   }
 }
 
-void readFile(){
-    std::ifstream ficheroEntrada;
-
-    ficheroEntrada.open ("C:/Users/U1/Documents/Archivos/grafoPequeno.txt");
-
-
-    string frase;
-
-
-    //va lleyendo linea por linea
-    while (!ficheroEntrada.eof()){
-        getline(ficheroEntrada, frase);
-
-        //#pragma omp parallel
-        //{
-            Obtener_Datos_Nodos(frase);
-        //};
-        //Break
-    }
-    ultimo=ultimoEnLeer;
-    ultimoEnLeer=0;
-    
-    ficheroEntrada.close();
-    //Crea los respectivos archivos
-    string arch="C:/Users/U1/Documents/Archivos/parejas.txt";
-    fi.open(arch);
-    crearParejas();
-    fi.close();
-
-
-}
 string cortarPareja(string pareja){
   string respuesta="";
   respuesta+="Pareja: ";
@@ -461,17 +469,17 @@ string cortarPareja(string pareja){
 
 int main() {
 
-    //readFile();
+    readFile();
     //#pragma omp parallel
-  //frase=frase.substr(0,4);
-  string a="2,3,[2,3],[3,4],7,1";
-  string b="2,5,[2,3,4,5],[3,4,5,8],20,3";
-  string c="2,5,[2,7,3,4,5],[3,7,4,5,8],27,4";
-  cout<<cortarPareja(a);
-  cout<<cortarPareja(b);
-  cout<<cortarPareja(c);
-    {
+    //frase=frase.substr(0,4);
 
-    };
+    /*
+    string a="2,3,[2,3],[3,4],7,1";
+    string b="2,5,[2,3,4,5],[3,4,5,8],20,3";
+    string c="2,5,[2,7,3,4,5],[3,7,4,5,8],27,4";
+    cout<<cortarPareja(a);
+    cout<<cortarPareja(b);
+    cout<<cortarPareja(c);*/
+
     return 0;
 }
