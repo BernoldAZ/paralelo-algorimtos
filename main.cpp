@@ -67,6 +67,7 @@ int indice2=0;
 
 //*************************************************************************************************************************************************************************
 //AQUI PARA ABAJO HACE LO DE LEER EL ARCHIVO Y CREAR NODOS
+
 void Obtener_Datos_Nodos (string frase) {
 
     node Node_Actual;
@@ -184,30 +185,21 @@ void Obtener_Datos_Nodos (string frase) {
 
 void readFile() {
     std::ifstream ficheroEntrada;
-
     ficheroEntrada.open("C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/paralelo-algorimtos/graph_info.txt");
-
-
     string frase;
-
 
     //va lleyendo linea por linea
     while (!ficheroEntrada.eof()) {
-
         if(contador_Nodos == 50155){   //Hace que termine de leer el archivo. 50155 es la cantidad de nodos que hay
             break;
         }
         getline(ficheroEntrada, frase);
-
         //#pragma omp parallel
         //{
         Obtener_Datos_Nodos(frase);
         //};
     }
     ficheroEntrada.close();
-
-    std::cout << buscarNodo(74754).id_nodo << std::endl;
-
 
     //Crea los respectivos archivos
     /*
@@ -216,8 +208,8 @@ void readFile() {
     crearParejas();
     fi.close();*/
 }
-
 //AQUI PARA ARRIBA HACE LO DE LEER EL ARCHIVO Y CREAR NODOS
+
 //********************************************************************************************************************************
 void escribir(string entrada){
   fi.seekp(indice);//Se ubica en el indice
@@ -473,13 +465,15 @@ int main() {
     //#pragma omp parallel
     //frase=frase.substr(0,4);
 
-    /*
+    std::cout << buscarNodo(74754).id_nodo << std::endl;
+
+
     string a="2,3,[2,3],[3,4],7,1";
     string b="2,5,[2,3,4,5],[3,4,5,8],20,3";
     string c="2,5,[2,7,3,4,5],[3,7,4,5,8],27,4";
     cout<<cortarPareja(a);
     cout<<cortarPareja(b);
-    cout<<cortarPareja(c);*/
+    cout<<cortarPareja(c);
 
     return 0;
 }
