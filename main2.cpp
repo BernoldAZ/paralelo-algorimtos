@@ -1,9 +1,8 @@
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <fstream>
-
-#include "omp.h"
-#include "uthash.h"
+#include <mpi.h>
 
 using namespace std;
 
@@ -34,6 +33,9 @@ ifstream salid2;
 string arch="/home/curso-262/grafoP/parejas.txt";
 string arch2="/home/curso-262/grafoP/nodos.txt";
 string arch3="/home/curso-262/grafoP/infoParejas.txt";
+int id=0;//Numero de nodos, van desde 0 hasta size-1
+int rango=0;//Numero de nodos
+long nodoGrande=0;
 
 //***************************************************************************************************
 //Funciones que hacen distintas cosas pequeñas
@@ -133,15 +135,11 @@ void Obtener_Datos_Nodos (string frase) {
     //}
     //AGREGA EL NODO AL ARRAY DE NODOS
     Array_Nodes[Node_Actual.id_nodo] = Node_Actual; //Se agrega en la posicion del id
-    //Si el nodo leido no tiene arcos hacia el, es un nodo inicial y se coloca en el array de nodos iniciales
-    /*
-    if (IsFirst) {
-        Array_Nodes_Iniciales[UltimoNodoInicial] = Node_Actual;
-        UltimoNodoInicial++;
-    }
-    */
     contador_Nodos++;
-    //std::cout << Node_Actual.id_nodo << std::endl;
+
+    if(Node_Actual.id_nodo>nodoGrande){
+      nodoGrande=Node_Actual.id_nodo;
+    }
 }
 
 
@@ -158,17 +156,16 @@ void escribir(string entrada){//Escribe en el archivo de parejas de nodos (apyo)
   fi.close();
   salid.close();
 }
-void escribir1(string entrada){//Escribe en el archivo con metricas de cada nodo
 
-  string arch2="C:/Users/U1/Documents/Archivos/nodos.txt";
-  salida1.open(arch2,ios::app);
-  salid1.open(arch2);
-  salid1.seekg(0,ios::end);
-  long fileSize=salid1.tellg();
-  salida1.seekp(fileSize);
-  salida1 << entrada;
-  salida1.close();
-  salid1.close();
+void escribir1(string entrada){//Escribe en el archivo con metricas de cada nodo
+    salida1.open(arch2,ios::app);
+    salid1.open(arch2);
+    salid1.seekg(0,ios::end);
+    long fileSize=salid1.tellg();
+    salida1.seekp(fileSize);
+    salida1 << entrada;
+    salida1.close();
+    salid1.close();
 }
 
 void escribir2(string entrada){//Escribe en el archivo con metricas de cada par de nodo
@@ -182,22 +179,6 @@ void escribir2(string entrada){//Escribe en el archivo con metricas de cada par 
   salid2.close();
 }
 
-/*
-node buscarNodo(int id){//Buscar nodo(viejo)
-
-  node j;
-  int cont2=0;
-  while(cont2<ultimo+1){
-      if(Array_Nodes[cont2].id_nodo==id){
-          j=Array_Nodes[cont2];
-          break;
-      }
-      cont2++;
-  }
-  return j;
-
-}
-*/
 
 void infoPareja(node a, node b,string c,string d,int nivel,int peso){//Metodo que crea un string que se usa de apoyo para las parejas de nodos
   string info;
@@ -221,7 +202,7 @@ void infoPareja(node a, node b,string c,string d,int nivel,int peso){//Metodo qu
   info+=",";
   info+=to_string(nivel);//Cantidad de nodos por los que pasa
   int cont=0;
-  info+="\n";
+  info+="\r\n";
   escribir(info);
   //Escribe el archivo
   nivel+=1;
@@ -287,7 +268,7 @@ string metricaFan(string f){
       nodoActual="";
   }
   contNodo++;
-  metrica+="\nSumatoria neta: ";//Suma todo solo una vez
+  metrica+="\r\nSumatoria neta: ";//Suma todo solo una vez
   int cont=0;
   int suma=0;
   int nodosSinRepetir[10000];
@@ -315,7 +296,7 @@ string metricaFan(string f){
       cont++;
   }
   metrica+=to_string(suma);
-  metrica+="\nSumatoria absoluta: ";//Suma todo
+  metrica+="\r\nSumatoria absoluta: ";//Suma todo
   cont=0;
   suma=0;
   contNodo--;
@@ -325,7 +306,7 @@ string metricaFan(string f){
       cont++;
   }
   metrica+=to_string(suma);
-  metrica+="\nPromedio: ";//El anterior entre la cantidad de nodos
+  metrica+="\r\nPromedio: ";//El anterior entre la cantidad de nodos
   suma=suma/(contNodo);//Calcula promedio
   metrica+=to_string(suma);
   return metrica;
@@ -340,7 +321,7 @@ string calcularFanOutConMetrica(node a){//Metodo que saca el fan out de un nodo 
       return h;
   }else{
       string ayuda=h;
-      h+=";\nMetrica: ";
+      h+=";\r\nMetrica: ";
       h+=metricaFan(ayuda);
       return h;
   }
@@ -355,7 +336,7 @@ string calcularFanInConMetrica(node a){//Metodo que saca el fan in de un nodo y 
       return h;
   }else{
       string ayuda=h;
-      h+=";\nMetrica: ";
+      h+=";\r\nMetrica: ";
       h+=metricaFan(ayuda);
       return h;
   }
@@ -364,37 +345,38 @@ string calcularFanInConMetrica(node a){//Metodo que saca el fan in de un nodo y 
 void crearSalida1(node a){//Metodo que calcula las metricas de un nodo
   string respuesta;
   respuesta="Nodo: "+to_string(a.id_nodo);
-  respuesta+=";\nFan In: ";
+  respuesta+=";\r\nFan In: ";
   string h=calcularFanInConMetrica(a);
   respuesta+=h;
-  respuesta+=";\nFan Out: ";
+  respuesta+=";\r\nFan Out: ";
   h=calcularFanOutConMetrica(a);
   respuesta+=h;
-  respuesta+=";\n\n";
+  respuesta+=";\r\n\r\n";
   escribir1(respuesta);
 }
 
 void crearParejas(){//Metodo que crea todas las parejas existentes de nodos
-  int ultimoEnLeer=0;
+  float nodosCU=(nodoGrande+0.0)/rango;
+  int parada=nodosCU*(id+1);
   //PARALELIZAR
-  int nodos=0;
-  while(nodos<contador_Nodos){
+  int nodos=nodosCU*id;
+  while(nodos<parada){
       //cout<<"Creando parejas del nodo: "<<ultimoEnLeer<<"\n";
-      if(Array_Nodes[ultimoEnLeer].id_nodo!=0){
-          infoPareja(Array_Nodes[ultimoEnLeer],Array_Nodes[ultimoEnLeer],"","",1,0);
-          nodos++;
+      if(Array_Nodes[nodos].id_nodo!=0){
+          infoPareja(Array_Nodes[nodos],Array_Nodes[nodos],"","",1,0);
       }
-      ultimoEnLeer++;
+      nodos++;
   }
 }
+
 void crearMetricaNodos(){
-  int nodos=0;
   //PARALELIZAAAAAAAAR
-  int leyendo=0;
-  while(nodos<contador_Nodos){
+  float nodosCU=(nodoGrande+0.0)/rango;
+  int parada=nodosCU*(id+1);
+  int leyendo=nodosCU*id;
+  while(leyendo<parada){
       if(Array_Nodes[leyendo].id_nodo!=0){
         crearSalida1(Array_Nodes[leyendo]);
-        nodos++;
       }
       leyendo++;
   }
@@ -421,7 +403,7 @@ string cortarPareja(string pareja){//Este es un metodo largo para obtener la met
       parserPesos++;
   }
   parserPesos++;
-  respuesta+="\nMetrica:\nSumatoria neta:\n";
+  respuesta+="\r\nMetrica:\r\nSumatoria neta:\r\n";
   int nodos[10000];
   int peso=0;
   int tope=0;
@@ -458,7 +440,7 @@ string cortarPareja(string pareja){//Este es un metodo largo para obtener la met
       }
   }
   respuesta+=to_string(peso);
-  respuesta+="\nSumatoria absoluta:\n";
+  respuesta+="\r\nSumatoria absoluta:\r\n";
   parserPesos++;
   string pesoNodo;
   while(pareja[parserPesos]!=','){
@@ -468,7 +450,7 @@ string cortarPareja(string pareja){//Este es un metodo largo para obtener la met
   parserPesos++;
   peso=StringToInt(pesoNodo);
   respuesta+=to_string(peso);
-  respuesta+="\nPromedio:\n";
+  respuesta+="\r\nPromedio:\r\n";
   pesoNodo="";
   while(parserPesos<=pareja.length()){
       pesoNodo+=pareja[parserPesos];
@@ -477,7 +459,7 @@ string cortarPareja(string pareja){//Este es un metodo largo para obtener la met
   int cantNodos=1;
   cantNodos+=StringToInt(pesoNodo);
   respuesta+=to_string(peso/cantNodos);
-  respuesta+="\n";
+  respuesta+="\r\n";
   return respuesta;
 }
 
@@ -504,7 +486,7 @@ string cortarPareja2(string pareja){//Este es un metodo para obtener la metrica 
   while(pareja[parser]!=']'){
       parser++;
   }
-  respuesta+="\nMetrica:\nSumatoria neta:\n";
+  respuesta+="\r\nMetrica:\nSumatoria neta:\r\n";
   int peso=0;
   parser++;
   parser++;
@@ -516,9 +498,9 @@ string cortarPareja2(string pareja){//Este es un metodo para obtener la metrica 
   peso=StringToInt(ayuda);
   parser++;
   respuesta+=to_string(peso);
-  respuesta+="\nSumatoria absoluta:\n";
+  respuesta+="\r\nSumatoria absoluta:\r\n";
   respuesta+=to_string(peso);
-  respuesta+="\nPromedio:\n";
+  respuesta+="\r\nPromedio:\r\n";
   ayuda="";
   while(parser<=pareja.length()){
       ayuda+=pareja[parser];
@@ -527,28 +509,13 @@ string cortarPareja2(string pareja){//Este es un metodo para obtener la metrica 
   int cantNodos=0;
   cantNodos+=StringToInt(ayuda);
   respuesta+=to_string(peso/cantNodos);
-  respuesta+="\n";
+  respuesta+="\r\n\r\n";
   return respuesta;
 }
 
-void readFile2() {
-  std::ifstream ficheroEntrada;
-  ficheroEntrada.open("C:/Users/usuario/Desktop/TEC/algoritmos/Tarea/Pruebas/Paralelo/paralelo-algorimtos/graph_info.txt");
-  string frase;
-  //Array_Nodes[ultimoEnLeer] = Node_Actual;
-  //va lleyendo linea por linea
-  while (!ficheroEntrada.eof()) {
-      getline(ficheroEntrada, frase);
-      Obtener_Datos_Nodos(frase);
-  }
-  ficheroEntrada.close();
-  //std::cout << buscarNodo(74754).id_nodo << std::endl;
-}
-
-
 void readFile(){//Practicamente todo lo principal
     std::ifstream ficheroEntrada;
-    ficheroEntrada.open ("C:/Users/U1/Documents/Archivos/grafoPequeno.txt");
+    ficheroEntrada.open ("/home/curso-262/grafoP/grafoPequeno.txt");
     string frase;
     //va lleyendo linea por linea del grafo
     while (!ficheroEntrada.eof()){
@@ -556,25 +523,9 @@ void readFile(){//Practicamente todo lo principal
         Obtener_Datos_Nodos(frase);
     }
     ficheroEntrada.close();
-    //Crea los respectivos archivos
-    string arch="C:/Users/U1/Documents/Archivos/parejas.txt";
-    string arch2="C:/Users/U1/Documents/Archivos/nodos.txt";
-    string arch3="C:/Users/U1/Documents/Archivos/infoParejas.txt";
-    fi.open(arch);
-    salid.open(arch);
-    //salida1.open(arch2);
-    //salid1.open(arch2);
-    //crearParejas();//Crea parejas de nodos
+    crearParejas();//Crea parejas de nodos
     crearMetricaNodos();//Crea la metrica de cada nodo
-    cout<<"Hizo los nodos\n";
-    fi.close();
-    salid.close();
-    //salida1.close();
-    //salid1.close();
-    /*
-    ficheroEntrada.open ("C:/Users/U1/Documents/Archivos/parejas.txt");
-    salida2.open(arch3);//De aqui para bajo se crea la metrica de cada par de nodos
-    salid2.open(arch3);
+    ficheroEntrada.open (arch);
     while (!ficheroEntrada.eof()){
         getline(ficheroEntrada, frase);
         if(frase==""){
@@ -583,41 +534,17 @@ void readFile(){//Practicamente todo lo principal
         frase=cortarPareja2(frase);
         escribir2(frase);
     }
-    cout<<"B\n";
     ficheroEntrada.close();
-    salida2.close();
-    salid2.close();
-    */
-}
-
-void simulacion(){//simulacion de como partir los nodos en mpi
-  int cont=0;
-  int max=2;
-  int nodos=8;
-  while((nodos%max)!=0){
-      nodos++;
-  }
-  float nodosCU=(nodos+0.0)/max;
-  while(cont<max){
-      cout<<"Nodo: "<<cont<<" se encarga desde: "<<int(nodosCU*cont)<<" hasta: "<<int(nodosCU*(cont+1))<<"\n";
-      cont++;
-  }
-  return;
 }
 
 int main() {
-    //readFile();
-    simulacion();
-    cout<<"listo";
-    //#pragma omp parallel
-  //simulacion();
-  /*
-    std::ifstream ficheroEntrada;
-    ficheroEntrada.open ("C:/Users/U1/Documents/Archivos/prueba.txt");
-    ficheroEntrada.seekg(0,ios::end);
-    int fileSize=ficheroEntrada.tellg();
-    ficheroEntrada.close();
-    cout<<fileSize;
-    */
+    MPI_Init(NULL,NULL);
+    MPI_Comm_rank( MPI_COMM_WORLD, &id );
+    MPI_Comm_size( MPI_COMM_WORLD, &rango );
+    readFile();
+    MPI_Finalize();
+    //cout<<"listo";
+    {
+    };
     return 0;
 }
